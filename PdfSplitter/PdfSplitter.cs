@@ -6,9 +6,9 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Aspose.Pdf;
-using System.Linq;
 using System.Collections.Generic;
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.IO;
 
 namespace PdfSplitter
 {
@@ -25,16 +25,18 @@ namespace PdfSplitter
 
                 var result = new List<byte[]>();
 
-                var pdfDocument = new Document(req.Body);
-                var pages = pdfDocument.Pages.ToArray();
+                var inputDocument = PdfReader.Open(req.Body, PdfDocumentOpenMode.Import);
 
-                foreach (var page in pages)
+                for (var idx = 0; idx < inputDocument.PageCount; idx++)
                 {
                     using (var ms = new MemoryStream())
                     {
-                        var doc = new Document();
-                        doc.Pages.Add(page);
-                        doc.Save(ms, SaveFormat.Pdf);
+                        var outputDocument = new PdfDocument();
+                        outputDocument.Version = inputDocument.Version;
+
+                        // Add the page and save it.
+                        outputDocument.AddPage(inputDocument.Pages[idx]);
+                        outputDocument.Save(ms);
                         result.Add(ms.ToArray());
                     }
                 }
