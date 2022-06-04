@@ -30,11 +30,13 @@ namespace PdfSplitter
 
                 foreach (var page in pages)
                 {
-                    using var ms = new MemoryStream();
-                    var doc = new Document();
-                    doc.Pages.Add(page);
-                    doc.Save(ms, SaveFormat.Pdf);
-                    result.Add(ms.ToArray());
+                    using (var ms = new MemoryStream())
+                    {
+                        var doc = new Document();
+                        doc.Pages.Add(page);
+                        doc.Save(ms, SaveFormat.Pdf);
+                        result.Add(ms.ToArray());
+                    }
                 }
 
                 return new OkObjectResult(result.ToArray());
