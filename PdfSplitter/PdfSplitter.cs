@@ -42,7 +42,7 @@ namespace PdfSplitter
             catch (Exception ex)
             {
                 log.LogInformation($"Unable to split pdf file. Error - {ex.Message}");
-                return new BadRequestObjectResult(ex.Message);
+                return new BadRequestObjectResult($"Message - {ex.Message}. StackTrace - {ex.StackTrace}");
             }
         }
     }
